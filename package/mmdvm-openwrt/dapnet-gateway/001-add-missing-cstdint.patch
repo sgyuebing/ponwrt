@@ -1,0 +1,31 @@
+--- a/Conf.h
++++ b/Conf.h
+@@ -18,6 +18,8 @@
+ 
+ #include <string>
+ #include <vector>
++#include <cstdint>
+ 
+ class CConf
+ {
+@@ -32,8 +34,8 @@ public:
+     bool read();
+     bool write() const;
+ 
+-    std::vector<unsigned int> getWhiteList() const;
+-    std::vector<unsigned int> getBlackList() const;
++    std::vector<uint32_t> getWhiteList() const;
++    std::vector<uint32_t> getBlackList() const;
+ 
+ private:
+     std::string m_fileName;
+--- a/Conf.cpp
++++ b/Conf.cpp
+@@ -22,6 +22,7 @@
+ #include <cstdlib>
+ #include <cstring>
+ #include <cctype>
++#include <cstdint>
+ 
+ #if defined(_WIN32) || defined(_WIN64)
+ #include <windows.h>

@@ -1,0 +1,18 @@
+ 
+ --- a/Conf.cpp
++++ b/Conf.cpp
+@@ -19,6 +19,7 @@
+ #include <string>
+ #include <vector>
+ #include <cctype>
++#include <cstdint>
+ 
+ // ... ∆‰”‡≤ª±‰
+ 
+ --- a/Conf.h
++++ b/Conf.h
+@@ -1,6 +1,7 @@
+ #pragma once
++#include <cstdint>
+ #include <string>
+ #include <vector>

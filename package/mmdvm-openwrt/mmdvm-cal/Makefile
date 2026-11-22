@@ -38,8 +38,8 @@ TARGET_CXXFLAGS = -O3 -std=c++0x
 TARGET_LDFLAGS = -L$(STAGING_DIR)/usr/lib
 
 MAKE_FLAGS +=\
-		LD=$(TARGET_CXX) \
-        CXXFLAGS="$(TARGET_CXXFLAGS)" \
+        LD="$(TARGET_CXX_NOCACHE)" \
+        CXXFLAGS="$(TARGET_CXXFLAGS) $(TARGET_CPPFLAGS)" \
         LDFLAGS="$(TARGET_LDFLAGS)" \
 
 define Package/${PKG_NAME}/install

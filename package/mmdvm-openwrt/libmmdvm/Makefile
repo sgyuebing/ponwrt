@@ -36,8 +36,7 @@ ifeq ($(ARCH),mips)
 endif
 
 MAKE_FLAGS +=\
-		LD=$(TARGET_CXX) \
-        CXXFLAGS="$(TARGET_CXXFLAGS)" \
+        CXXFLAGS="$(TARGET_CXXFLAGS) $(TARGET_CPPFLAGS)" \
         LDFLAGS="$(TARGET_LDFLAGS)" \
 
 

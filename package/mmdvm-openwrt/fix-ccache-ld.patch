@@ -1,0 +1,29 @@
+diff --git a/libmmdvm/Makefile b/libmmdvm/Makefile
+index 0d4f2b7..7f46753 100755
+--- a/libmmdvm/Makefile
++++ b/libmmdvm/Makefile
+@@ -36,8 +36,7 @@ ifeq ($(ARCH),mips)
+ endif
+ 
+ MAKE_FLAGS +=\
+-		LD=$(TARGET_CXX) \
+-        CXXFLAGS="$(TARGET_CXXFLAGS)" \
++        CXXFLAGS="$(TARGET_CXXFLAGS) $(TARGET_CPPFLAGS)" \
+         LDFLAGS="$(TARGET_LDFLAGS)" \
+ 
+ 
+diff --git a/mmdvm-cal/Makefile b/mmdvm-cal/Makefile
+index c09b624..319ca6c 100644
+--- a/mmdvm-cal/Makefile
++++ b/mmdvm-cal/Makefile
+@@ -38,8 +38,8 @@ TARGET_CXXFLAGS = -O3 -std=c++0x
+ TARGET_LDFLAGS = -L$(STAGING_DIR)/usr/lib
+ 
+ MAKE_FLAGS +=\
+-		LD=$(TARGET_CXX) \
+-        CXXFLAGS="$(TARGET_CXXFLAGS)" \
++        LD="$(TARGET_CXX_NOCACHE)" \
++        CXXFLAGS="$(TARGET_CXXFLAGS) $(TARGET_CPPFLAGS)" \
+         LDFLAGS="$(TARGET_LDFLAGS)" \
+ 
+ define Package/${PKG_NAME}/install

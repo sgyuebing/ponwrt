@@ -51,7 +51,12 @@ MAKE_FLAGS +=\
 define Package/${PKG_NAME}/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/MMDVMHost $(1)/usr/sbin/
-	$(CP) -a files/* $(1)/
+
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/etc/init.d/mmdvmhost $(1)/etc/init.d/mmdvmhost
+
+	$(INSTALL_DIR) $(1)/etc
+	$(INSTALL_CONF) ./files/etc/MMDVM.ini $(1)/etc/MMDVM.ini
 endef
 
 define Package/${PKG_NAME}/conffiles

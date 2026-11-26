@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=ysf-clients
 PKG_REV:=4eadb0a
 PKG_VERSION:=1.2.0
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://github.com/g4klx/YSFClients.git
@@ -52,11 +52,22 @@ define Package/${PKG_NAME}/conffiles
 /etc/YSFGateway.ini
 endef
 
+# 25.12 opkg 新版其实不需要手动postinst enable，procd脚本自带自动注册；保留兼容
 define Package/${PKG_NAME}/postinst
 #!/bin/sh
 [ -n "$${IPK_INSTALL}" ] && {
     /etc/init.d/ysfgateway enable
     /etc/init.d/ysfgateway start
+}
+exit 0
+endef
+
+# 增加 prerm，卸载前停止服务
+define Package/${PKG_NAME}/prerm
+#!/bin/sh
+[ -n "$${IPK_REMOVE}" ] && {
+    /etc/init.d/ysfgateway stop
+    /etc/init.d/ysfgateway disable
 }
 exit 0
 endef

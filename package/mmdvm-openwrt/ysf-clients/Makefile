@@ -1,4 +1,3 @@
-#
 # Copyright 2019-2020 Michael BD7MQB <bd7mqb@qq.com>
 # This is free software, licensed under the GNU GENERAL PUBLIC LICENSE, Version 2.0
 #
@@ -53,15 +52,13 @@ define Package/${PKG_NAME}/conffiles
 /etc/YSFGateway.ini
 endef
 
-# define Package/${PKG_NAME}/postinst
-# #!/bin/sh
-# [ ! -f /etc/config/mmdvm ] && touch /etc/config/mmdvm
-# [ -z `uci -q get mmdvm.System_Fusion.Enable` ] && {
-# 	uci set mmdvm.System_Fusion=mmdvmhost
-# 	uci set mmdvm.System_Fusion.Enable=1
-# 	uci commit mmdvm
-# }
-# exit 0
-# endef
+define Package/${PKG_NAME}/postinst
+#!/bin/sh
+[ -n "$${IPK_INSTALL}" ] && {
+    /etc/init.d/ysfgateway enable
+    /etc/init.d/ysfgateway start
+}
+exit 0
+endef
 
 $(eval $(call BuildPackage,${PKG_NAME}))

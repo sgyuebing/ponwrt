@@ -9,12 +9,12 @@ include $(INCLUDE_DIR)/version.mk
 PKG_NAME:=mmdvm-luci
 PKG_VERSION:=1.2.0
 PKG_RELEASE:=4
-GIT_REVISION:=$(shell git rev-parse --short HEAD)
+# 修复：在package子目录下取当前包git hash，而不是顶层源码
+GIT_REVISION:=$(shell cd $(CURDIR) && git rev-parse --short HEAD 2>/dev/null || echo nogit)
 PKG_REVISION:=$(PKG_VERSION)-$(PKG_RELEASE)-$(GIT_REVISION)
-# PKG_BUILD_DEPENDS += $(LUCI_BUILD_DEPENDS)
+
 PKG_BUILD_DEPENDS:=
 PKG_CONFIG_DEPENDS += CONFIG_LUCI_SRCDIET CONFIG_LUCI_JSMIN CONFIG_LUCI_CSSTIDY
-# PKG_FILE_DEPENDS:=
 PKG_LICENSE:=GPL-2.0
 PKG_MAINTAINER:=Michael BD7MQB <bd7mqb@qq.com>
 
@@ -30,12 +30,11 @@ LUCI_LANG.en=English
 LUCI_LANG.zh-cn=中文 (Chinese)
 
 define Package/${PKG_NAME}
-	SECTION:=mmdvm
-	CATEGORY:=MMDVM
-	#SUBMENU:=Misc
+	SECTION:=luci
+	CATEGORY:=LuCI
+	SUBMENU:=3. Applications
 	TITLE:=MMDVM's LuCI plugins.
 	DEPENDS:=+mmdvm-host +libmmdvm +libubus-lua +libubox-lua +luci-compat
-	#VERSION:=$(PKG_RELEASE)-$(REVISION)
 endef
 
 define Package/${PKG_NAME}/config
@@ -44,33 +43,35 @@ define Package/${PKG_NAME}/config
 	depends on PACKAGE_${PKG_NAME}
 	default y
 	help
-	  "LuCI plugin to configurate MMDVM Radio"
-	
+	  LuCI plugin to configurate MMDVM Radio
+
 	config LUCI_THEME_BOOTSTRAP_MMDVM
 	bool "luci-theme-bootstrap-mmdvm"
 	depends on PACKAGE_${PKG_NAME}
 	default y
 	help
-	  "LuCI bootstrap mod theme for MMDVM"
+	  LuCI bootstrap mod theme for MMDVM
 
+	# 25.12 上游已经移除 luasrcdiet/jsmin/csstidy，默认关闭，不建议开启
 	config LUCI_SRCDIET
 	bool "Minify Lua sources"
 	depends on PACKAGE_${PKG_NAME}
-	default y
+	default n
 	help
-	  "Minify Lua sources"
+	  Minify Lua sources (tools missing on 25.12, keep disabled)
 
 	config LUCI_JSMIN
 	bool "Minify JavaScript sources"
 	depends on PACKAGE_${PKG_NAME}
-	default y
+	default n
 
    	config LUCI_CSSTIDY
 	bool "Minify CSS files"
 	depends on PACKAGE_${PKG_NAME}
-	default y
+	default n
 
-	menu "Translations"$(foreach lang,$(LUCI_LANGUAGES),
+	menu "Translations"
+$(foreach lang,$(LUCI_LANGUAGES),
     config LUCI_LANG_$(lang)
 	  tristate "$(shell echo '$(LUCI_LANG.$(lang))' | sed -e 's/^.* (\(.*\))$$/\1/') ($(lang))")
   endmenu
@@ -154,8 +155,8 @@ LUCI_BUILD_PACKAGES := $(PKG_NAME)
 
 define LuciTranslation
   define Package/$(PKG_NAME)-i18n-$(1)
-    SECTION:=net
-    CATEGORY:=MMDVM
+    SECTION:=luci
+    CATEGORY:=LuCI
     TITLE:=$(PKG_NAME) - $(1) translation
     HIDDEN:=1
     DEFAULT:=LUCI_LANG_$(1)||(ALL&&m)
@@ -178,7 +179,7 @@ define LuciTranslation
   endef
 
   define Package/$(PKG_NAME)-i18n-$(1)/postinst
-	[ -n "$$$${IPKG_INSTROOT}" ] || {
+	[ -n "$$${IPKG_INSTROOT}" ] || {
 		(. /etc/uci-defaults/$(PKG_NAME)-i18n-$(1)) && rm -f /etc/uci-defaults/$(PKG_NAME)-i18n-$(1)
 		exit 0
 	}
@@ -190,4 +191,3 @@ endef
 
 $(foreach lang,$(LUCI_LANGUAGES),$(eval $(call LuciTranslation,$(lang))))
 $(foreach pkg,$(LUCI_BUILD_PACKAGES),$(eval $(call BuildPackage,$(pkg))))
-# $(eval $(call BuildPackage,${PKG_NAME}))

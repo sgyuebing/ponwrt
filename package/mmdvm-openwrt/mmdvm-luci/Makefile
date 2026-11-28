@@ -177,13 +177,7 @@ define LuciTranslation
 		po2lmo $(po) \
 			$$(1)$(LUCI_LIBRARYDIR)/i18n/$(basename $(notdir $(po))).$(1).lmo;)
   endef
-
-  define Package/$(PKG_NAME)-i18n-$(1)/postinst
-	[ -n "$$${IPKG_INSTROOT}" ] || {
-		(. /etc/uci-defaults/$(PKG_NAME)-i18n-$(1)) && rm -f /etc/uci-defaults/$(PKG_NAME)-i18n-$(1)
-		exit 0
-	}
-  endef
+  # ========== 重点：删掉了 i18n 包的 postinst 段！uci-defaults 系统自动处理 ==========
 
   LUCI_BUILD_PACKAGES += $(PKG_NAME)-i18n-$(1)
 
